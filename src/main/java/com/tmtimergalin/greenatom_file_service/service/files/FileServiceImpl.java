@@ -3,11 +3,13 @@ package com.tmtimergalin.greenatom_file_service.service.files;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileDto;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileService;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.FileExistsException;
+import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidFileContent;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.NoSuchFileException;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.RequiredParameterMissingException;
 import com.tmtimergalin.greenatom_file_service.data.entity.File;
 import com.tmtimergalin.greenatom_file_service.data.repo.FileRepo;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int createFile(FileDto file) throws RequiredParameterMissingException, FileExistsException {
+    public int createFile(FileDto file) throws RequiredParameterMissingException, FileExistsException, InvalidFileContent {
         if (!checkFileDtoValidity(file)) {
             throw new RequiredParameterMissingException("Required parameters missing");
+        }
+
+        if (!Base64.isBase64(file.getContent())) {
+            throw new InvalidFileContent("File content is not base64-encoded");
         }
         try {
             File toAdd = fileMapper.convert(file);

@@ -1,0 +1,23 @@
+services:
+  file-service-db:
+    env_file:
+      - .env
+    image: postgres:16.3
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - file-service-db-data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+  file-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+
+volumes:
+  file-service-db-data:
+    external: false

@@ -10,7 +10,7 @@ import com.tmtimergalin.greenatom_file_service.data.entity.File;
 import com.tmtimergalin.greenatom_file_service.data.repo.FileRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.dao.DataAccessException;
+import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class FileServiceImpl implements FileService {
         try {
             File toAdd = fileMapper.convert(file);
             return fileRepo.save(toAdd).getId();
-        } catch (DataAccessException e) { // TODO: заменить на более специфичное исключение
+        } catch (DbActionExecutionException e) {
             throw new FileExistsException("File with such name already exists");
         }
     }

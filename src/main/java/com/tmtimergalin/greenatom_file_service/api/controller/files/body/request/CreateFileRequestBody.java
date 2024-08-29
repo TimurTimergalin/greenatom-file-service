@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CreateFileRequestBody {
     private String title = null;
-    private LocalDateTime creationDate = null;
+    private LocalDateTime creation_date = null;
     private String description = null;
     private String content = null;
 }

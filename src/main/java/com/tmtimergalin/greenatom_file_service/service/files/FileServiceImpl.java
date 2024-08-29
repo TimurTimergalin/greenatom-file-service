@@ -22,7 +22,7 @@ public class FileServiceImpl implements FileService {
     private final FileEntityToDtoMapper fileMapper;
 
     private boolean checkFileDtoValidity(FileDto file) { // Проверяет, что все обязательные поля на месте
-        return file.getTitle() != null && !file.getTitle().isEmpty() && file.getContent() != null;
+        return file.getTitle() != null && !file.getTitle().isEmpty() && file.getContent() != null && file.getCreationDate() != null;
     }
 
     @Override

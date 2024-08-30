@@ -3,14 +3,18 @@ package com.tmtimergalin.greenatom_file_service.controller.files;
 import com.tmtimergalin.greenatom_file_service.api.controller.files.FilesController;
 import com.tmtimergalin.greenatom_file_service.api.controller.files.body.request.CreateFileRequestBody;
 import com.tmtimergalin.greenatom_file_service.api.controller.files.body.response.GetFileResponse;
+import com.tmtimergalin.greenatom_file_service.api.controller.files.body.response.GetFilesResponse;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileDto;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileService;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.FileServiceException;
+import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidPagingParamsException;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.NoSuchFileException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +44,20 @@ public class FilesControllerImpl implements FilesController {
             return ResponseEntity.ok(response);
         } catch (NoSuchFileException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/files")
+    @Override
+    public ResponseEntity<GetFilesResponse> getFiles(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "5") int pageSize) {
+        try {
+            List<FileDto> files = fileService.getAllFiles(pageNumber, pageSize);
+            GetFilesResponse response = new GetFilesResponse(
+                    files.stream().map(fileMapper::convert).toList()
+            );
+            return ResponseEntity.ok(response);
+        } catch (InvalidPagingParamsException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(400));
         }
     }
 }

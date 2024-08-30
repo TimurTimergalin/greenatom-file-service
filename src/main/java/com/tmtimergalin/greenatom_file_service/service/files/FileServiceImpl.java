@@ -2,17 +2,18 @@ package com.tmtimergalin.greenatom_file_service.service.files;
 
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileDto;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileService;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.FileExistsException;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidFileContent;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.NoSuchFileException;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.RequiredParameterMissingException;
+import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.*;
 import com.tmtimergalin.greenatom_file_service.data.entity.File;
 import com.tmtimergalin.greenatom_file_service.data.repo.FileRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +51,16 @@ public class FileServiceImpl implements FileService {
         }
 
         throw new NoSuchFileException("File with such id does not exist");
+    }
+
+    @Override
+    public List<FileDto> getAllFiles(int pageNumber, int pageSize) throws InvalidPagingParamsException {
+        Sort creationDateSort = Sort.by("creationDate").descending();
+        try {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, creationDateSort);
+            return fileRepo.findAll(pageable).getContent().stream().map(fileMapper::convert).toList();
+        } catch (IllegalArgumentException ignore) {
+            throw new InvalidPagingParamsException("Invalid page number or size");
+        }
     }
 }

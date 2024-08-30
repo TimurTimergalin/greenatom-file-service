@@ -285,6 +285,117 @@
 					"body": null
 				}
 			]
+		},
+		{
+			"name": "get_files",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful fetch\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Contains file\", function() {\r",
+							"    let json = pm.response.json()\r",
+							"    pm.expect(json.files).not.eql(null)\r",
+							"    let found = false\r",
+							"    for (let file of json.files) {\r",
+							"        found = found || (\r",
+							"            file.title === pm.variables.get(\"title\") &&\r",
+							"            (new Date(file.creation_date)).getTime() === (new Date(pm.variables.get(\"creation_date\"))).getTime() &&\r",
+							"            file.description === pm.variables.get(\"description\") &&\r",
+							"            file.content === pm.variables.get(\"content\")\r",
+							"        )\r",
+							"        if (found) {\r",
+							"            break\r",
+							"        }\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(found).eql(true)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/files?pageNumber=&pageSize=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"files"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "",
+							"description": "Номер страницы (с нуля)"
+						},
+						{
+							"key": "pageSize",
+							"value": "",
+							"description": "Размер страницы (не меньше 1)"
+						}
+					]
+				},
+				"description": "Метод для получения списка всех файлов. Файлы выводятся в порядке убывания воемени создания.\n\nДоступна пагинация (параметры `pageNumber` и `pageSize` со значениями по умолчанию `0` и `5` соответственно)"
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/files",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"files"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 30 Aug 2024 16:23:51 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"files\": [\n        {\n            \"title\": \"file title.txt\",\n            \"creation_date\": \"2007-12-01T00:00:00\",\n            \"description\": \"This is just a text file\",\n            \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\n        }\n    ]\n}"
+				}
+			]
 		}
 	]
 }

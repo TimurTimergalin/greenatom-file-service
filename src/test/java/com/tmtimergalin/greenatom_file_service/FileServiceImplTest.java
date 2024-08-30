@@ -1,10 +1,7 @@
 package com.tmtimergalin.greenatom_file_service;
 
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileDto;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.FileExistsException;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidFileContent;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidPagingParamsException;
-import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.RequiredParameterMissingException;
+import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.*;
 import com.tmtimergalin.greenatom_file_service.data.repo.FileRepo;
 import com.tmtimergalin.greenatom_file_service.service.files.FileEntityToDtoMapperImpl;
 import com.tmtimergalin.greenatom_file_service.service.files.FileServiceImpl;
@@ -16,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -62,6 +60,13 @@ public class FileServiceImplTest {
 
         Mockito.when(fileRepo.save(Mockito.any())).thenThrow(DbActionExecutionException.class); // Предполагаем, что условие уникальности нарушено
         assertThrows(FileExistsException.class, () -> fileServiceImpl.createFile(dto));
+    }
+
+    @Test
+    public void testUnknownFile() {
+        FileServiceImpl fileServiceImpl = new FileServiceImpl(fileRepo, mapper);
+        Mockito.when(fileRepo.findById(Mockito.any())).thenReturn(Optional.empty());
+        assertThrows(NoSuchFileException.class, () -> fileServiceImpl.getFile(1));
     }
 
     @Test

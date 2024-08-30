@@ -38,6 +38,7 @@
 │   │           │
 │   │           └───response
 │   │                   GetFileResponse.java // Структура тела ответа на запрос получения файла
+│   │                   GetFilesResponse.java // Структура тела ответа на запрос получения списка файлов
 │   │
 │   └───service  
 │       └───files  // Интерфейс сервиса - реализации логики
@@ -49,6 +50,7 @@
 │                   FileExistsException.java
 │                   FileServiceException.java
 │                   InvalidFileContent.java
+│                   InvalidPagingParamsException.java
 │                   NoSuchFileException.java
 │                   RequiredParameterMissingException.java
 │

@@ -3,6 +3,7 @@ package com.tmtimergalin.greenatom_file_service;
 import com.tmtimergalin.greenatom_file_service.api.service.files.FileDto;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.FileExistsException;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidFileContent;
+import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.InvalidPagingParamsException;
 import com.tmtimergalin.greenatom_file_service.api.service.files.exceptions.RequiredParameterMissingException;
 import com.tmtimergalin.greenatom_file_service.data.repo.FileRepo;
 import com.tmtimergalin.greenatom_file_service.service.files.FileEntityToDtoMapperImpl;
@@ -61,5 +62,18 @@ public class FileServiceImplTest {
 
         Mockito.when(fileRepo.save(Mockito.any())).thenThrow(DbActionExecutionException.class); // Предполагаем, что условие уникальности нарушено
         assertThrows(FileExistsException.class, () -> fileServiceImpl.createFile(dto));
+    }
+
+    @Test
+    public void testInvalidPagingParams() {
+        FileServiceImpl fileServiceImpl = new FileServiceImpl(fileRepo, mapper);
+        int[][] invalidPagingParams = new int[][]{
+                {0, 0},
+                {-1, 1},
+                {-1, 0}
+        };
+        for (int[] invalidPagingParam : invalidPagingParams) {
+            assertThrowsExactly(InvalidPagingParamsException.class, () -> fileServiceImpl.getAllFiles(invalidPagingParam[0], invalidPagingParam[1]));
+        }
     }
 }

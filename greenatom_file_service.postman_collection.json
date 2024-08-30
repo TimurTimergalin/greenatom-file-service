@@ -1,401 +1,401 @@
 {
-	"info": {
-		"_postman_id": "f2824803-0f9f-4800-ba5b-7deff933a981",
-		"name": "greenatom_file_service",
-		"description": "Микросервис для сохранения файлов на сервере",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33756723"
-	},
-	"item": [
-		{
-			"name": "create_file",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Successful file creation\", function() {\r",
-							"    pm.response.to.have.status(200)\r",
-							"})\r",
-							"\r",
-							"let file_id = parseInt(pm.response.text())\r",
-							"pm.environment.set(\"file_id\", file_id)"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"creation_date\": \"{{creation_date}}\",\r\n    \"description\": \"{{description}}\",\r\n    \"content\": \"{{content}}\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/file",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"file"
-					]
-				},
-				"description": "Метод для создания файла."
-			},
-			"response": [
-				{
-					"name": "success",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"file title.txt\",\r\n    \"creation_date\": \"2007-12-01T00:00\",\r\n    \"description\": \"This is just a text file\",\r\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/file",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"file"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json"
-						},
-						{
-							"key": "Transfer-Encoding",
-							"value": "chunked"
-						},
-						{
-							"key": "Date",
-							"value": "Fri, 30 Aug 2024 14:42:06 GMT"
-						},
-						{
-							"key": "Keep-Alive",
-							"value": "timeout=60"
-						},
-						{
-							"key": "Connection",
-							"value": "keep-alive"
-						}
-					],
-					"cookie": [],
-					"body": "1"
-				},
-				{
-					"name": "missing_param",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"file title.txt\",\r\n    \"creation_date\": null,\r\n    \"description\": \"This is just a text file\",\r\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/file",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"file"
-							]
-						}
-					},
-					"status": "Bad Request",
-					"code": 400,
-					"_postman_previewlanguage": "plain",
-					"header": [
-						{
-							"key": "Content-Length",
-							"value": "0"
-						},
-						{
-							"key": "Date",
-							"value": "Fri, 30 Aug 2024 14:48:22 GMT"
-						},
-						{
-							"key": "Connection",
-							"value": "close"
-						}
-					],
-					"cookie": [],
-					"body": null
-				}
-			]
-		},
-		{
-			"name": "get_file",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Successful fetch\", function() {\r",
-							"    pm.response.to.have.status(200)\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Correct file\", function() {\r",
-							"    let json = pm.response.json()\r",
-							"    pm.expect(json.title).eql(pm.variables.get(\"title\"))\r",
-							"    pm.expect(json.description).eql(pm.variables.get(\"description\"))\r",
-							"    pm.expect(new Date(json.creation_date)).eql(new Date(pm.variables.get(\"creation_date\")))\r",
-							"    pm.expect(json.content).eql(pm.variables.get(\"content\"))\r",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/file/{{file_id}}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"file",
-						"{{file_id}}"
-					]
-				},
-				"description": "Метод для получения файла"
-			},
-			"response": [
-				{
-					"name": "success",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/file/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"file",
-								"1"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json"
-						},
-						{
-							"key": "Transfer-Encoding",
-							"value": "chunked"
-						},
-						{
-							"key": "Date",
-							"value": "Fri, 30 Aug 2024 14:43:21 GMT"
-						},
-						{
-							"key": "Keep-Alive",
-							"value": "timeout=60"
-						},
-						{
-							"key": "Connection",
-							"value": "keep-alive"
-						}
-					],
-					"cookie": [],
-					"body": "{\n    \"title\": \"file title.txt\",\n    \"creation_date\": \"2007-12-01T00:00:00\",\n    \"description\": \"This is just a text file\",\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\n}"
-				},
-				{
-					"name": "not_found",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/file/2",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"file",
-								"2"
-							]
-						}
-					},
-					"status": "Not Found",
-					"code": 404,
-					"_postman_previewlanguage": "plain",
-					"header": [
-						{
-							"key": "Content-Length",
-							"value": "0"
-						},
-						{
-							"key": "Date",
-							"value": "Fri, 30 Aug 2024 14:54:38 GMT"
-						},
-						{
-							"key": "Keep-Alive",
-							"value": "timeout=60"
-						},
-						{
-							"key": "Connection",
-							"value": "keep-alive"
-						}
-					],
-					"cookie": [],
-					"body": null
-				}
-			]
-		},
-		{
-			"name": "get_files",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Successful fetch\", function() {\r",
-							"    pm.response.to.have.status(200)\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Contains file\", function() {\r",
-							"    let json = pm.response.json()\r",
-							"    pm.expect(json.files).not.eql(null)\r",
-							"    let found = false\r",
-							"    for (let file of json.files) {\r",
-							"        found = found || (\r",
-							"            file.title === pm.variables.get(\"title\") &&\r",
-							"            (new Date(file.creation_date)).getTime() === (new Date(pm.variables.get(\"creation_date\"))).getTime() &&\r",
-							"            file.description === pm.variables.get(\"description\") &&\r",
-							"            file.content === pm.variables.get(\"content\")\r",
-							"        )\r",
-							"        if (found) {\r",
-							"            break\r",
-							"        }\r",
-							"    }\r",
-							"\r",
-							"    pm.expect(found).eql(true)\r",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/files?pageNumber=&pageSize=",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"files"
-					],
-					"query": [
-						{
-							"key": "pageNumber",
-							"value": "",
-							"description": "Номер страницы (с нуля)"
-						},
-						{
-							"key": "pageSize",
-							"value": "",
-							"description": "Размер страницы (не меньше 1)"
-						}
-					]
-				},
-				"description": "Метод для получения списка всех файлов. Файлы выводятся в порядке убывания воемени создания.\n\nДоступна пагинация (параметры `pageNumber` и `pageSize` со значениями по умолчанию `0` и `5` соответственно)"
-			},
-			"response": [
-				{
-					"name": "success",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/files",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"files"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json"
-						},
-						{
-							"key": "Transfer-Encoding",
-							"value": "chunked"
-						},
-						{
-							"key": "Date",
-							"value": "Fri, 30 Aug 2024 16:23:51 GMT"
-						},
-						{
-							"key": "Keep-Alive",
-							"value": "timeout=60"
-						},
-						{
-							"key": "Connection",
-							"value": "keep-alive"
-						}
-					],
-					"cookie": [],
-					"body": "{\n    \"files\": [\n        {\n            \"title\": \"file title.txt\",\n            \"creation_date\": \"2007-12-01T00:00:00\",\n            \"description\": \"This is just a text file\",\n            \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\n        }\n    ]\n}"
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "f2824803-0f9f-4800-ba5b-7deff933a981",
+    "name": "greenatom_file_service",
+    "description": "Микросервис для сохранения файлов на сервере",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33756723"
+  },
+  "item": [
+    {
+      "name": "create_file",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful file creation\", function() {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "let file_id = parseInt(pm.response.text())\r",
+              "pm.environment.set(\"file_id\", file_id)"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"{{title}}\",\r\n    \"creation_date\": \"{{creation_date}}\",\r\n    \"description\": \"{{description}}\",\r\n    \"content\": \"{{content}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/file",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "file"
+          ]
+        },
+        "description": "Метод для создания файла."
+      },
+      "response": [
+        {
+          "name": "success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"file title.txt\",\r\n    \"creation_date\": \"2007-12-01T00:00\",\r\n    \"description\": \"This is just a text file\",\r\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/file",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "file"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 30 Aug 2024 14:42:06 GMT"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "1"
+        },
+        {
+          "name": "missing_param",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"file title.txt\",\r\n    \"creation_date\": null,\r\n    \"description\": \"This is just a text file\",\r\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/file",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "file"
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "plain",
+          "header": [
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 30 Aug 2024 14:48:22 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "close"
+            }
+          ],
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "get_file",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful fetch\", function() {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Correct file\", function() {\r",
+              "    let json = pm.response.json()\r",
+              "    pm.expect(json.title).eql(pm.variables.get(\"title\"))\r",
+              "    pm.expect(json.description).eql(pm.variables.get(\"description\"))\r",
+              "    pm.expect(new Date(json.creation_date)).eql(new Date(pm.variables.get(\"creation_date\")))\r",
+              "    pm.expect(json.content).eql(pm.variables.get(\"content\"))\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/file/{{file_id}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "file",
+            "{{file_id}}"
+          ]
+        },
+        "description": "Метод для получения файла"
+      },
+      "response": [
+        {
+          "name": "success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/file/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "file",
+                "1"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 30 Aug 2024 14:43:21 GMT"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"title\": \"file title.txt\",\n    \"creation_date\": \"2007-12-01T00:00:00\",\n    \"description\": \"This is just a text file\",\n    \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\n}"
+        },
+        {
+          "name": "not_found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/file/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "file",
+                "2"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "plain",
+          "header": [
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 30 Aug 2024 14:54:38 GMT"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": null
+        }
+      ]
+    },
+    {
+      "name": "get_files",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful fetch\", function() {\r",
+              "    pm.response.to.have.status(200)\r",
+              "})\r",
+              "\r",
+              "pm.test(\"Contains file\", function() {\r",
+              "    let json = pm.response.json()\r",
+              "    pm.expect(json.files).not.eql(null)\r",
+              "    let found = false\r",
+              "    for (let file of json.files) {\r",
+              "        found = found || (\r",
+              "            file.title === pm.variables.get(\"title\") &&\r",
+              "            (new Date(file.creation_date)).getTime() === (new Date(pm.variables.get(\"creation_date\"))).getTime() &&\r",
+              "            file.description === pm.variables.get(\"description\") &&\r",
+              "            file.content === pm.variables.get(\"content\")\r",
+              "        )\r",
+              "        if (found) {\r",
+              "            break\r",
+              "        }\r",
+              "    }\r",
+              "\r",
+              "    pm.expect(found).eql(true)\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/files?pageNumber=&pageSize=",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "files"
+          ],
+          "query": [
+            {
+              "key": "pageNumber",
+              "value": "",
+              "description": "Номер страницы (с нуля)"
+            },
+            {
+              "key": "pageSize",
+              "value": "",
+              "description": "Размер страницы (не меньше 1)"
+            }
+          ]
+        },
+        "description": "Метод для получения списка всех файлов. Файлы выводятся в порядке убывания воемени создания.\n\nДоступна пагинация (параметры `pageNumber` и `pageSize` со значениями по умолчанию `0` и `5` соответственно)"
+      },
+      "response": [
+        {
+          "name": "success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "files"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 30 Aug 2024 16:23:51 GMT"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=60"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"files\": [\n        {\n            \"title\": \"file title.txt\",\n            \"creation_date\": \"2007-12-01T00:00:00\",\n            \"description\": \"This is just a text file\",\n            \"content\": \"VmVyeSBpbXBvcnRhbnQgY29udGVudA==\"\n        }\n    ]\n}"
+        }
+      ]
+    }
+  ]
 }
